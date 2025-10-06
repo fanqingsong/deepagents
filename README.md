@@ -426,6 +426,70 @@ async def main():
 asyncio.run(main())
 ```
 
+## 🐳 LangGraph 微服务部署
+
+DeepAgents 现在支持使用 `langgraph up` 命令启动微服务，提供完整的 API 接口和 LangGraph Studio 界面。
+
+### 快速启动
+
+```bash
+# 1. 进入研究目录
+cd research
+
+# 2. 配置环境变量
+cp env.example .env
+# 编辑 .env 文件，配置 Azure OpenAI 密钥
+
+# 3. 启动微服务（已配置国内源）
+./start.sh
+
+# 4. 访问应用
+make interactive
+```
+
+**国内源配置**: 项目已配置国内源以加速部署，包括清华大学 PyPI 镜像、中科大 APT 镜像和阿里云 Docker 镜像仓库。
+
+### 微服务架构
+
+- **DeepAgents API**: 基于 LangGraph 的微服务，使用 `langgraph up` 启动
+- **PostgreSQL**: 数据持久化存储
+- **Redis**: 缓存和会话管理
+- **Prometheus + Grafana**: 监控和可视化
+
+### 功能特性
+
+- **LangGraph Studio**: 提供可视化的图编辑和调试界面
+- **RESTful API**: 完整的 API 接口支持
+- **智能路由**: 自动根据用户输入路由到合适的 Agent
+- **多 Agent 支持**: research、coding、general 三种专业 Agent
+- **实时监控**: 支持 Prometheus 和 Grafana 监控
+
+### 使用示例
+
+```bash
+# 启动微服务
+make up
+
+# 访问应用界面
+make interactive
+
+# 查看日志
+make logs
+
+# 运行测试
+make test
+```
+
+### 访问地址
+
+- **DeepAgents API**: http://localhost:8000
+- **DeepAgents 前端**: http://localhost:3000
+- **LangGraph Studio**: https://smith.langchain.com/studio/?baseUrl=http://localhost:8000
+- **Grafana 监控**: http://localhost:3001 (admin/admin123)
+- **Prometheus**: http://localhost:9090
+
+详细文档请参考 [微服务文档](research/README_langgraph.md)
+
 ## Roadmap
 - [ ] Allow users to customize full system prompt
 - [ ] Code cleanliness (type hinting, docstrings, formating)

@@ -6,7 +6,7 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import AgentMiddleware, SummarizationMiddleware, HumanInTheLoopMiddleware
 from langchain.agents.middleware.human_in_the_loop import ToolConfig
 from langchain.agents.middleware.prompt_caching import AnthropicPromptCachingMiddleware
-from deepagents.middleware import PlanningMiddleware, FilesystemMiddleware, SubAgentMiddleware
+# 延迟导入以避免循环导入
 from deepagents.prompts import BASE_AGENT_PROMPT
 from deepagents.model import get_default_model
 from deepagents.types import SubAgent, CustomSubAgent
@@ -24,6 +24,9 @@ def agent_builder(
 ):
     if model is None:
         model = get_default_model()
+
+    # 延迟导入以避免循环导入
+    from deepagents.middleware import PlanningMiddleware, FilesystemMiddleware, SubAgentMiddleware
 
     deepagent_middleware = [
         PlanningMiddleware(),

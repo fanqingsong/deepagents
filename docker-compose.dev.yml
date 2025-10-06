@@ -1,0 +1,84 @@
+services:
+  # DeepAgents LangGraph 开发应用
+  deepagents-dev:
+    build:
+      context: ./
+      dockerfile: ./research/Dockerfile.dev
+    container_name: deepagents-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY:-}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT:-}
+      - AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME:-gpt-4}
+      - AZURE_OPENAI_MODEL_NAME=${AZURE_OPENAI_MODEL_NAME:-gpt-4}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION:-2024-02-15-preview}
+    volumes:
+      - ./research:/app
+      - agent_data:/app/data
+    restart: unless-stopped
+    command: ["langgraph", "dev", "--host", "0.0.0.0", "--port", "8000", "--no-browser"]
+    networks:
+      - deepagents-network
+
+  # DeepAgents 前端界面（开发模式）
+  deepagents-frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: deepagents-frontend-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_DEPLOYMENT_URL=http://localhost:8000
+      - NEXT_PUBLIC_AGENT_ID=research
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - deepagents-dev
+    restart: unless-stopped
+    networks:
+      - deepagents-network
+
+  # PostgreSQL 数据库
+  postgres:
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/postgres:15-alpine
+    container_name: deepagents-postgres-dev
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=deepagents
+      - POSTGRES_USER=deepagents
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-deepagents123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./research/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - deepagents-network
+
+  # Redis 缓存服务
+  redis:
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/redis:7-alpine
+    container_name: deepagents-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    networks:
+      - deepagents-network
+
+volumes:
+  agent_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  deepagents-network:
+    driver: bridge

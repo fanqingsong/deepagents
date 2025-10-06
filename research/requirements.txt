@@ -1,0 +1,14 @@
+# DeepAgents 核心依赖
+-e ../../
+
+# LangGraph 开发依赖
+langgraph-cli[inmem]
+
+# 可选依赖
+requests==2.31.0
+aiofiles==23.2.1
+
+# 开发依赖
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2

@@ -1,0 +1,25 @@
+# LangGraph 核心依赖
+langgraph-cli[inmem]
+tavily-python
+
+# DeepAgents 微服务依赖
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+pydantic>=2.7.4
+python-multipart>=0.0.6
+
+# DeepAgents 核心依赖
+langgraph>=1.0.0a3
+langchain-anthropic>=0.1.23
+langchain-openai>=0.1.0
+langchain>=1.0.0a10
+langgraph-prebuilt>=0.7.0a2
+
+# 可选依赖
+requests==2.31.0
+aiofiles==23.2.1
+
+# 开发依赖
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
